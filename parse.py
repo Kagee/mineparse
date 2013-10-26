@@ -30,6 +30,8 @@ def DTM(msg, time, match):
 def put(action,timestamp,nick,message):
 	if(len(storage) > qsize):
 		storage.pop(0)
+	message = message.replace("<", "&lt;").replace(">", "&gt;")
+	nick = nick.replace("<", "&lt;").replace(">", "&gt;")
 	storage.append({'action':action,'timestamp':timestamp,'nick':nick,'message':message})
 
 def writeJSON():
