@@ -1,12 +1,13 @@
 import sys # stdin
 import re # regexp
-import os
-import json
+import os # rename
+import json # dumps
+import datetime # current date
 
 qsize = 20;
 chat_file = "chat.json"
 users_file = "users.json"
-DEBUG = False
+DEBUG = True
 
 server_msg = re.compile(r"\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (.*)")
 chat_message = re.compile(r"<([^ ]*)> (.*)")
@@ -19,6 +20,13 @@ online_message = re.compile(r"There are \d+/\d+ players online:");
 storage = list()
 users = set()
 
+def D(msg):
+	if(DEBUG):
+		print(msg);
+
+def DTM(msg, time, match):
+	D(msg)
+
 def put(action,timestamp,nick,message):
 	if(len(storage) > qsize):
 		storage.pop(0)
@@ -27,6 +35,7 @@ def put(action,timestamp,nick,message):
 def writeJSON():
 	f = open(chat_file+".new", 'w+')
 	js = json.dumps(storage)
+	D(js)
 	f.write(js)
 	f.flush()
 	f.close()
@@ -39,7 +48,7 @@ writeJSON()
 def writeUserJSON():
 	f2 = open(users_file+".new", 'w+')
 	js = json.dumps(list(users))
-	print(js)
+	D(js)
 	f2.write(js)
 	f2.flush()
 	f2.close()
@@ -53,24 +62,26 @@ def dput(action, time, match):
 	put(action, time, match.group(1), match.group(2))
 	writeJSON()	
 
-def D(msg):
-	if(DEBUG):
-		print(msg);
+def sput(action, time, text):
+    put(action, time, "", text)
+    writeJSON()
 
-def DTM(msg, time, match):
-	D(msg)
-
+time = "00:00:00"
 while True:
 	line = sys.stdin.readline()
 	line=line.strip()
 	match = re.match(server_msg, line)
 	if (match):
+		if(time[0:2] > match.group(1)[0:2]):
+			D("A new day has dawned")
+			sput("new_day", match.group(1), "A new day has dawned.") 
 		time = match.group(1)
 		data = match.group(2)
 		match = re.match(chat_message, data);
 		if(match):
-			DTM("said ", time, match);
-			dput("said", time, match)
+			if not (match.group(2)[0:2] == "N "):
+				DTM("said ", time, match);
+				dput("said", time, match)
 			continue;
 		match = re.match(achievement_message, data);
 		if(match):
@@ -88,12 +99,14 @@ while True:
 			D("join " + match.group(1))
 			users.add(match.group(1))
 			writeUserJSON()
+			put("join", time, match.group(1), "joined the game")
 			continue
 		match = re.match(leave_message, data)
 		if(match):
 			D("leave " + match.group(1))
 			users.discard(match.group(1))
 			writeUserJSON()
+			put("leave", time, match.group(1), "left the game")
 			continue
 		match = re.match(online_message, data)
 		if(match):
