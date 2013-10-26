@@ -11,7 +11,7 @@ DEBUG = True
 
 server_msg = re.compile(r"\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (.*)")
 chat_message = re.compile(r"<([^ ]*)> (.*)")
-achievement_message = re.compile(r"([^ ]*) has just earned the achievement_messageevement \[(.*)\]")
+achievement_message = re.compile(r"([^ ]*) has just earned the achievement \[(.*)\]")
 death_message = re.compile(r"([^ ]*) ((blew|burned|death_message|drowned|fell|got|hit|tried|starved|suffocated|walked|was|went|withered).*)")
 join_message = re.compile(r"([^ ]*) joined the game")
 leave_message = re.compile(r"([^ ]*) left the game");
