@@ -7,7 +7,7 @@ import datetime # current date
 qsize = 20;
 chat_file = "chat.json"
 users_file = "users.json"
-DEBUG = True
+DEBUG = False
 
 server_msg = re.compile(r"\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (.*)")
 chat_message = re.compile(r"<([^ ]*)> (.*)")
