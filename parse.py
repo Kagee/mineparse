@@ -33,6 +33,7 @@ def put(action,timestamp,nick,message):
 	message = message.replace("<", "&lt;").replace(">", "&gt;")
 	nick = nick.replace("<", "&lt;").replace(">", "&gt;")
 	storage.append({'action':action,'timestamp':timestamp,'nick':nick,'message':message})
+	writeJSON()
 
 def writeJSON():
 	f = open(chat_file+".new", 'w+')
@@ -62,11 +63,9 @@ writeUserJSON()
 
 def dput(action, time, match):
 	put(action, time, match.group(1), match.group(2))
-	writeJSON()	
 
 def sput(action, time, text):
     put(action, time, "", text)
-    writeJSON()
 
 time = "00:00:00"
 while True:
@@ -94,7 +93,6 @@ while True:
 		if(match):
 			DTM("died ", time, match)
 			dput("died", time, match);
-			writeJSON()
 			continue;
 		match = re.match(join_message, data)
 		if(match):
