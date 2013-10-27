@@ -13,6 +13,7 @@ server_msg = re.compile(r"\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (.*)")
 chat_message = re.compile(r"<([^ ]*)> (.*)")
 achievement_message = re.compile(r"([^ ]*) has just earned the achievement \[(.*)\]")
 death_message = re.compile(r"([^ ]*) ((blew|burned|death_message|drowned|fell|got|hit|tried|starved|suffocated|walked|was|went|withered).*)")
+action_message = re.compile(r"\* ([^ ]*) (.*)")
 join_message = re.compile(r"([^ ]*) joined the game")
 leave_message = re.compile(r"([^ ]*) left the game");
 online_message = re.compile(r"There are \d+/\d+ players online:");
@@ -108,6 +109,10 @@ while True:
 			writeUserJSON()
 			put("leave", time, match.group(1), "left the game")
 			continue
+		match = re.match(action_message, data)
+		if (match):
+			D("action " + match.group(1))
+			put("action", time, match.group(1), match.group(2))
 		match = re.match(online_message, data)
 		if(match):
 			data=sys.stdin.readline()
