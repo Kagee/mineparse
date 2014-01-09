@@ -3,6 +3,7 @@ import re # regexp
 import os # rename
 import json # dumps
 import datetime # current date
+from time import time as unix_timestamp # time.time()
 
 qsize = 20;
 chat_file = "chat.json"
@@ -31,9 +32,7 @@ def DTM(msg, time, match):
 def put(action,timestamp,nick,message):
 	if(len(storage) > qsize):
 		storage.pop(0)
-	#message = message.replace("<", "&lt;").replace(">", "&gt;")
-	#nick = nick.replace("<", "&lt;").replace(">", "&gt;")
-	storage.append({'action':action,'timestamp':timestamp,'nick':nick,'message':message})
+	storage.append({'action':action,'timestamp':timestamp,'nick':nick,'message':message,'unix_timestamp':unix_timestamp()})
 	writeJSON()
 
 def writeJSON():
